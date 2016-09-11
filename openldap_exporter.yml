@@ -1,0 +1,5 @@
+---
+server: tcp:port=9142
+client: tcp:host=127.0.0.1:port=389
+binddn: cn=Manager,dc=example,dc=com
+bindpw: changeme

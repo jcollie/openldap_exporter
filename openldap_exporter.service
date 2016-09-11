@@ -1,0 +1,10 @@
+[Unit]
+Description=Prometheus OpenLDAP Exporter
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/openldap_exporter
+ExecStart=/opt/openldap_exporter/bin/python /opt/openldap_exporter/openldap_exporter.py --config /opt/openldap_exporter/openldap_exporter.yml
+
+[Install]
+WantedBy=multi-user.target
