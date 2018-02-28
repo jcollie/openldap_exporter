@@ -47,7 +47,9 @@ class Metrics(object):
    log = Logger()
 
    basedn = 'cn=Monitor'
+   basedn_ops = 'cn=Operations,cn=Monitor'
    query = '(|(objectClass=monitorCounterObject)(objectClass=monitoredObject))'
+   query_ops = '(objectClass=monitorOperation)'
 
    def __init__(self, request, config):
       self.request = request
@@ -68,7 +70,13 @@ class Metrics(object):
    def isAuthenticated(self, result):
       base = LDAPEntry(self.client, self.basedn)
       d = base.search(filterText = self.query, attributes = ('*', '+'))
+
+      base_ops = LDAPEntry(self.client, self.basedn_ops)
+      d_ops = base.search(filterText = self.query_ops, attributes = ('*', '+'))
+
       d.addCallback(self.gotResults)
+
+      d_ops.addCallback(self.gotResultsOperations)
 
    def gotResults(self, results):
       self.request.setHeader(b'Content-Type', b'text/plain; charset=utf-8; version=0.0.4')
@@ -98,6 +106,17 @@ class Metrics(object):
       self.request.finish()
       self.client.unbind()
       self.client.transport.loseConnection()
+
+   def gotResultsOperations(self, results_ops):
+      for entry in results_ops:
+         if 'monitorOperation' in entry['objectClass']:
+            if 'monitorOpCompleted' in entry and len(entry['monitorOpCompleted']) == 1:
+               try:
+                  labels = 'dn="{}"'.format(entry.dn)
+                  value = float(entry['monitorOpCompleted'].pop())
+                  self.request.write('openldap_monitored_op{{{}}} {}\n'.format(labels, value).encode('utf-8'))
+               except ValueError:
+                  pass
 
 class MetricsPage(Resource):
    log = Logger()
