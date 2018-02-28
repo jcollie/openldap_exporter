@@ -59,7 +59,10 @@ class Metrics(object):
 
    def gotConnection(self, client):
       self.client = client
-      d = self.client.bind(self.config['binddn'], self.config['bindpw'])
+      if 'binddn' in self.config:
+         d = self.client.bind(self.config['binddn'], self.config['bindpw'])
+      else:
+         d = self.client.bind()
       d.addCallback(self.isAuthenticated)
 
    def isAuthenticated(self, result):
