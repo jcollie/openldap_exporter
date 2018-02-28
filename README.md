@@ -24,10 +24,8 @@ for. Any objects that are found that have data that can be converted
 to a floating point number are exported as metrics with the object's
 distinguished name as a label.
 
-See the [OpenLDAP
-Manual](http://www.openldap.org/doc/admin24/monitoringslapd.html) for
+See the [OpenLDAP Manual](http://www.openldap.org/doc/admin24/monitoringslapd.html) for
 more information on how OpenLDAP exposes performance metrics.
-
 
 ## Installation
 
@@ -44,6 +42,11 @@ cp openldap_exporter.service /etc/systemd/system
 systemctl daemon-reload
 systemctl enable openldap_exporter
 systemctl start openldap_exporter
+```
+
+## Docker Build
+```
+docker build . -t openldap_exporter
 ```
 
 ## Configuration
@@ -71,6 +74,7 @@ Consult the OpenLDAP manual for more information on configuring
 OpenLDAP access lists.
 
 ### Exporter
+#### Local Installation
 
 The exporter is configured using command line options:
 
@@ -98,6 +102,11 @@ Twisted server endpoint specifiers are described
 [here](https://twistedmatrix.com/documents/current/core/howto/endpoints.html#servers). Twisted
 client endpoint specifiers are described
 [here](https://twistedmatrix.com/documents/current/core/howto/endpoints.html#clients).
+
+#### Docker Installation
+```
+docker run -d -v <location of the config>/openldap_exporter.yml:/config/openldap_exporter.yml -p 9142:9142 --net host openldap_exporter
+```
 
 ### Prometheus
 
