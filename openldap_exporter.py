@@ -145,7 +145,7 @@ parser.add_argument('--config',
                     required = True)
 arguments = parser.parse_args()
 
-config = yaml.load(arguments.config)
+config = yaml.safe_load(arguments.config)
 arguments.config.close()
 
 output = textFileLogObserver(sys.stderr, timeFormat='')
